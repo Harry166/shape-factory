@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shape Factory</title>
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        #counter {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+        }
+
+        #money {
+            position: fixed;
+            top: 40px;
+            left: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+        }
+
+        #sellButton {
+            position: fixed;
+            top: 70px;
+            left: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        #sellFilter {
+            position: fixed;
+            top: 110px;
+            left: 10px;
+            display: flex;
+            border: 1px solid #ccc;
+            width: 150px;
+        }
+
+        .filterOption {
+            flex: 1;
+            padding: 5px;
+            text-align: center;
+            cursor: pointer;
+            border-right: 1px solid #ccc;
+        }
+
+        .filterOption:last-child {
+            border-right: none;
+        }
+
+        .filterOption.active {
+            background-color: #e0e0e0;
+        }
+
+        #conveyor {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 50px;
+            background-color: black;
+        }
+
+        .shape {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: #4CAF50;
+            bottom: 10px;
+        }
+
+        #paperButton {
+            position: fixed;
+            bottom: 60px;
+            left: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        #paperCount {
+            position: fixed;
+            bottom: 60px;
+            left: 100px;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+        }
+
+        #paperCost {
+            position: fixed;
+            bottom: 100px;
+            left: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+        }
+
+        #skills {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+        }
+
+        .skill-container {
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            width: 300px;
+        }
+
+        .skill-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .skill-description {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .skill-level {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .skill-button {
+            padding: 5px 15px;
+            cursor: pointer;
+        }
+
+        .skill-cost {
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 10px;
+            display: none;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+
+        .skill-button:hover + .skill-cost {
+            display: block;
+        }
+
+        .tabs {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: white;
+        }
+
+        .tab.active {
+            background-color: #e0e0e0;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .skill-container + .skill-container {
+            margin-top: 150px;
+        }
+
+        #crypto-money {
+            position: fixed;
+            top: 40px;
+            left: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+        }
+
+        #bits {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+        }
+
+        #buyBits {
+            position: fixed;
+            top: 70px;
+            left: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        #startSession {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        #timer {
+            position: fixed;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+        }
+
+        .circle {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        #sellBits {
+            position: fixed;
+            top: 100px;
+            left: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <audio id="soundtrack" loop>
+        <source src="Shape-Factory-Soundtrack.ogg" type="audio/ogg">
+    </audio>
+    <div class="tabs">
+        <div class="tab active" data-tab="factory">Factory</div>
+    </div>
+    
+    <div class="tab-content active" id="factory-tab">
+        <div id="skills">Skills</div>
+        <div class="skill-container">
+            <div class="skill-title">Faster Crafters</div>
+            <div class="skill-description">Increases shape production speed by 0.1 seconds</div>
+            <div class="skill-level">Level: 0</div>
+            <button class="skill-button">Buy</button>
+            <div class="skill-cost">Cost: $10.00</div>
+        </div>
+        <div class="skill-container" style="display: none;">
+            <div class="skill-title">Conversion</div>
+            <div class="skill-description">Converts all the shapes you have every 10 seconds</div>
+            <div class="skill-level">Level: 0</div>
+            <button class="skill-button">Buy</button>
+            <div class="skill-cost">Cost: $25.00</div>
+        </div>
+        <div class="skill-container" style="display: none;">
+            <div class="skill-title">Crypto Mining</div>
+            <div class="skill-description">Get bits, more money</div>
+            <div class="skill-level">Level: 0</div>
+            <button class="skill-button">Buy</button>
+            <div class="skill-cost">Cost: $50.00</div>
+        </div>
+        <div id="counter">Shapes: 0</div>
+        <div id="money">Money: $0.00</div>
+        <button id="sellButton">Sell Shapes</button>
+        <div id="sellFilter">
+            <div class="filterOption active" data-amount="1">x1</div>
+            <div class="filterOption" data-amount="10">x10</div>
+            <div class="filterOption" data-amount="100">x100</div>
+        </div>
+        <div id="paperCost">Cost: $1.00</div>
+        <button id="paperButton">Buy Paper</button>
+        <div id="paperCount">Paper: 500</div>
+        <div id="conveyor"></div>
+    </div>
+    <div class="tab-content" id="crypto-tab"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const soundtrack = document.getElementById('soundtrack');
+            soundtrack.volume = 0.5;  // Set volume to 50%
+            
+            // Play audio on first interaction
+            document.addEventListener('click', () => {
+                soundtrack.play().catch(() => {
+                    // Handle any errors silently
+                });
+            }, { once: true });  // 'once: true' means this listener will only fire once
+
+            let shapeCount = 0;
+            let money = 0;
+            let paper = 500;
+            let crafterLevel = 0;
+            let crafterCost = 10;
+            let conversionLevel = 0;
+            let conversionCost = 25;
+            let crafterSpeedInterval = 2000;
+            let shapeInterval = null;
+            let bits = 0;
+            let sessionActive = false;
+            let sessionBits = 0;
+            let circleInterval;
+            let timerInterval;
+            let conversionInterval;
+            let selectedAmount = 1;  // Default to x1
+            
+            const counterElement = document.getElementById('counter');
+            const moneyElement = document.getElementById('money');
+            const sellButton = document.getElementById('sellButton');
+            const filterOptions = document.querySelectorAll('.filterOption');
+            const paperButton = document.getElementById('paperButton');
+            const paperCountElement = document.getElementById('paperCount');
+            const crafterSkill = document.querySelectorAll('.skill-container')[0];
+            const crafterButton = crafterSkill.querySelector('.skill-button');
+            const crafterLevelElement = crafterSkill.querySelector('.skill-level');
+            const crafterCostElement = crafterSkill.querySelector('.skill-cost');
+            const cryptoSkill = document.querySelectorAll('.skill-container')[2];
+            const bitsElement = document.getElementById('bits');
+            const cryptoMoneyElement = document.getElementById('crypto-money');
+            const buyBitsButton = document.getElementById('buyBits');
+            const startSessionButton = document.getElementById('startSession');
+            const timerElement = document.getElementById('timer');
+            const sellBitsButton = document.getElementById('sellBits');
+            const conversionSkill = document.querySelectorAll('.skill-container')[1];
+            const conversionButton = conversionSkill.querySelector('.skill-button');
+            const conversionLevelElement = conversionSkill.querySelector('.skill-level');
+            const conversionCostElement = conversionSkill.querySelector('.skill-cost');
+
+            // Update filter options click handler
+            document.querySelectorAll('.filterOption').forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove active class from all options
+                    document.querySelectorAll('.filterOption').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    // Add active class to clicked option
+                    option.classList.add('active');
+                    // Update selected amount
+                    selectedAmount = parseInt(option.dataset.amount);
+                });
+            });
+
+            // Update sell button click handler
+            sellButton.addEventListener('click', () => {
+                const amountToSell = Math.min(shapeCount, selectedAmount);
+                if (amountToSell > 0) {
+                    shapeCount -= amountToSell;
+                    money += amountToSell * 0.5;
+                    counterElement.textContent = `Shapes: ${shapeCount}`;
+                    moneyElement.textContent = `Money: $${money.toFixed(2)}`;
+                }
+            });
+
+            paperButton.addEventListener('click', () => {
+                if (money >= 1) {
+                    money -= 1;
+                    paper += 500;
+                    paperCountElement.textContent = `Paper: ${paper}`;
+                    moneyElement.textContent = `Money: $${money.toFixed(2)}`;
+                }
+            });
+
+            // Add visibility change handler
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    // Clear the normal interval when tab is not visible
+                    clearInterval(shapeInterval);
+                    // Start a slower interval for offline generation
+                    shapeInterval = setInterval(() => {
+                        if (paper >= 10) {
+                            paper -= 10;
+                            paperCountElement.textContent = `Paper: ${paper}`;
+                            shapeCount++;
+                            counterElement.textContent = `Shapes: ${shapeCount}`;
+                        }
+                    }, 5000 - (crafterLevel * 100)); // 5 seconds base, reduced by upgrades
+                } else {
+                    // Restart the normal interval when tab becomes visible
+                    clearInterval(shapeInterval);
+                    shapeInterval = setInterval(createShape, crafterSpeedInterval);
+                }
+            });
+
+            // Modify the crafter button click handler
+            crafterButton.addEventListener('click', () => {
+                if (money >= crafterCost) {
+                    money -= crafterCost;
+                    crafterLevel++;
+                    
+                    if (crafterLevel >= 10) {
+                        crafterLevelElement.textContent = 'Level: MAX';
+                        crafterButton.disabled = true;
+                        crafterCostElement.style.display = 'none';
+                    } else {
+                        crafterLevelElement.textContent = `Level: ${crafterLevel}`;
+                        const increment = 1 + (crafterLevel * 0.5);
+                        crafterCost += increment;
+                        crafterCostElement.textContent = `Cost: $${crafterCost.toFixed(2)}`;
+                    }
+
+                    // Show conversion skill after first upgrade and add its event listener
+                    if (crafterLevel >= 1) {
+                        conversionSkill.style.display = 'block';
+                        // Add conversion button click handler here, after it's visible
+                        const conversionButton = conversionSkill.querySelector('.skill-button');
+                        const conversionLevelElement = conversionSkill.querySelector('.skill-level');
+                        const conversionCostElement = conversionSkill.querySelector('.skill-cost');
+                        
+                        conversionButton.addEventListener('click', () => {
+                            if (money >= conversionCost) {
+                                money -= conversionCost;
+                                
+                                // Disable the button and update display after purchase
+                                conversionButton.disabled = true;
+                                conversionLevelElement.textContent = 'Purchased';
+                                conversionCostElement.style.display = 'none';
+                                
+                                moneyElement.textContent = `Money: $${money.toFixed(2)}`;
+
+                                // Start conversion interval
+                                conversionInterval = setInterval(() => {
+                                    if (shapeCount > 0) {
+                                        money += shapeCount * 0.5;  // Convert shapes to money at same rate as selling
+                                        shapeCount = 0;
+                                        counterElement.textContent = `Shapes: ${shapeCount}`;
+                                        moneyElement.textContent = `Money: $${money.toFixed(2)}`;
+                                    }
+                                }, 10000);  // Every 10 seconds
+                            }
+                        });
+                    }
+
+                    // Show crypto skill after 3 upgrades
+                    if (crafterLevel >= 3) {
+                        cryptoSkill.style.display = 'block';
+                    }
+                    
+                    moneyElement.textContent = `Money: $${money.toFixed(2)}`;
+                    
+                    if (!document.hidden) {
+                        clearInterval(shapeInterval);
+                        crafterSpeedInterval = 2000 - (crafterLevel * 100);
+                        shapeInterval = setInterval(createShape, crafterSpeedInterval);
+                    }
+                }
+            });
+
+            // Single tab click handler for all tabs
+            document.querySelector('.tabs').addEventListener('click', (e) => {
+                if (e.target.classList.contains('tab')) {
+                    // Only allow tab switching if there's more than one tab
+                    const allTabs = document.querySelectorAll('.tab');
+                    if (allTabs.length > 1) {
+                        allTabs.forEach(t => t.classList.remove('active'));
+                        tabContents.forEach(content => content.classList.remove('active'));
+                        
+                        e.target.classList.add('active');
+                        document.getElementById(`${e.target.dataset.tab}-tab`).classList.add('active');
+
+                        // Always highlight factory tab
+                        if (e.target.dataset.tab === 'factory') {
+                            document.querySelector('[data-tab="factory"]').classList.add('active');
+                        }
+                    }
+                }
+            });
+
+            // Define tabContents at the start of your script
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            function createShape() {
+                if (paper >= 10) {
+                    const shape = document.createElement('div');
+                    shape.className = 'shape';
+                    shape.style.left = '0px';
+                    document.getElementById('factory-tab').appendChild(shape);
+                    paper -= 10;
+                    paperCountElement.textContent = `Paper: ${paper}`;
+
+                    let position = 0;
+                    const moveInterval = setInterval(() => {
+                        position += 2;
+                        shape.style.left = position + 'px';
+
+                        if (position > window.innerWidth) {
+                            shape.remove();
+                            clearInterval(moveInterval);
+                            shapeCount++;
+                            counterElement.textContent = `Shapes: ${shapeCount}`;
+                        }
+                    }, 20);
+                }
+            }
+
+            // Start initial interval
+            shapeInterval = setInterval(createShape, crafterSpeedInterval);
+
+            // Add new handler for crypto skill button
+            const cryptoButton = cryptoSkill.querySelector('.skill-button');
+            cryptoButton.addEventListener('click', () => {
+                if (money >= 50) {  // $50 cost for crypto skill
+                    money -= 50;
+                    moneyElement.textContent = `Money: $${money.toFixed(2)}`;
+                    
+                    // Add crypto mining tab when skill is purchased
+                    const tabsContainer = document.querySelector('.tabs');
+                    const cryptoTab = document.createElement('div');
+                    cryptoTab.className = 'tab';
+                    cryptoTab.dataset.tab = 'crypto';
+                    cryptoTab.textContent = 'Crypto Mining';
+                    tabsContainer.appendChild(cryptoTab);
+                    
+                    // Disable the crypto skill button after purchase
+                    cryptoButton.disabled = true;
+                    cryptoSkill.querySelector('.skill-cost').style.display = 'none';
+                    cryptoSkill.querySelector('.skill-level').textContent = 'Level: 1';
+
+                    // Add crypto UI elements
+                    const cryptoTabContent = document.getElementById('crypto-tab');
+                    cryptoTabContent.innerHTML = `
+                        <div id="bits">Bits: 0</div>
+                        <div id="crypto-money">Money: $${money.toFixed(2)}</div>
+                        <button id="buyBits">Buy Bits ($5.00)</button>
+                        <button id="sellBits">Sell Bits</button>
+                        <button id="startSession">Start Session</button>
+                        <div id="timer"></div>
+                    `;
+
+                    // Reassign element references after adding them to DOM
+                    const bitsElement = document.getElementById('bits');
+                    const cryptoMoneyElement = document.getElementById('crypto-money');
+                    const buyBitsButton = document.getElementById('buyBits');
+                    const sellBitsButton = document.getElementById('sellBits');
+                    const startSessionButton = document.getElementById('startSession');
+                    const timerElement = document.getElementById('timer');
+                }
+            });
+
+            buyBitsButton.addEventListener('click', () => {
+                if (money >= 5) {
+                    money -= 5;
+                    bits++;
+                    bitsElement.textContent = `Bits: ${bits}`;
+                    moneyElement.textContent = `Money: $${money.toFixed(2)}`;
+                    cryptoMoneyElement.textContent = `Money: $${money.toFixed(2)}`;
+                }
+            });
+
+            // Update both money displays when money changes
+            const updateMoney = () => {
+                moneyElement.textContent = `Money: $${money.toFixed(2)}`;
+                cryptoMoneyElement.textContent = `Money: $${money.toFixed(2)}`;
+            };
+
+            startSessionButton.addEventListener('click', () => {
+                if (!sessionActive && bits >= 1) {
+                    bits--;
+                    bitsElement.textContent = `Bits: ${bits}`;
+                    sessionActive = true;
+                    sessionBits = 0;
+                    startSession();
+                }
+            });
+
+            function createCircles() {
+                // Remove existing circles
+                document.querySelectorAll('.circle').forEach(circle => circle.remove());
+
+                // Create 3 new circles
+                for (let i = 0; i < 3; i++) {
+                    const circle = document.createElement('div');
+                    circle.className = 'circle';
+                    
+                    // Adjusted position to avoid UI elements
+                    const maxX = window.innerWidth - 100;  // Padding from right edge
+                    const minY = 150;  // Minimum Y to avoid top buttons
+                    const maxY = window.innerHeight - 100;  // Padding from bottom
+                    circle.style.left = (Math.random() * (maxX - 100) + 100) + 'px';  // Minimum 100px from left
+                    circle.style.top = (Math.random() * (maxY - minY) + minY) + 'px';
+
+                    // One random circle gets an X
+                    if (i === Math.floor(Math.random() * 3)) {
+                        circle.textContent = 'X';
+                        circle.addEventListener('click', () => endSession(false));
+                    } else {
+                        circle.addEventListener('click', () => {
+                            if (sessionActive) {
+                                sessionBits++;
+                                circle.remove();
+                            }
+                        });
+                    }
+
+                    document.getElementById('crypto-tab').appendChild(circle);
+                }
+            }
+
+            function startSession() {
+                let timeLeft = 10;
+                timerElement.textContent = `Time: ${timeLeft}s`;
+
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    timerElement.textContent = `Time: ${timeLeft}s`;
+                    if (timeLeft <= 0) {
+                        endSession(true);
+                    }
+                }, 1000);
+
+                createCircles();
+                circleInterval = setInterval(createCircles, 1000);  // Changed to 1 second
+            }
+
+            function endSession(success) {
+                clearInterval(timerInterval);
+                clearInterval(circleInterval);
+                document.querySelectorAll('.circle').forEach(circle => circle.remove());
+                sessionActive = false;
+                timerElement.textContent = '';
+
+                if (success) {
+                    bits += sessionBits;
+                    bitsElement.textContent = `Bits: ${bits}`;
+                }
+                sessionBits = 0;
+            }
+
+            sellBitsButton.addEventListener('click', () => {
+                if (bits > 0) {
+                    money += bits * 5;
+                    bits = 0;
+                    bitsElement.textContent = `Bits: ${bits}`;
+                    updateMoney();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
